@@ -160,7 +160,6 @@ public class TransportationOrderControllerTest {
        }
 
        @Test
-ssfsdsdssdssss
        public void testGetOrderFail() throws Exception {
        
             //call GET "/transportationorders/{truck}"  application/json
