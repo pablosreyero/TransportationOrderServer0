@@ -1,10 +1,10 @@
 package es.upm.dit.apsv.transportationorderserver;
+
 import static org.mockito.Mockito.when;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.hamcrest.Matchers.*;
-
 
 import java.io.BufferedReader;
 
@@ -20,14 +20,11 @@ import java.util.List;
 
 import java.util.Optional;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 import org.junit.jupiter.api.Test;
 
 import org.mockito.InjectMocks;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,34 +44,27 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-
 import es.upm.dit.apsv.transportationorderserver.repository.TransportationOrderRepository;
 
 import es.upm.dit.apsv.transportationorderserver.controller.TransportationOrderController;
 
 import es.upm.dit.apsv.transportationorderserver.model.TransportationOrder;
 
-
-
 @WebMvcTest(TransportationOrderController.class)
 
 public class TransportationOrderControllerTest {
-
 
     @InjectMocks
 
     private TransportationOrderController business;
 
-
     @MockBean
 
     private TransportationOrderRepository repository;
 
-
     @Autowired
 
     private MockMvc mockMvc;
-
 
     @Test
 
@@ -85,7 +75,6 @@ public class TransportationOrderControllerTest {
        
 
         when(repository.findAll()).thenReturn(getAllTestOrders());
-
 
         RequestBuilder request = MockMvcRequestBuilders
 
@@ -105,9 +94,7 @@ public class TransportationOrderControllerTest {
 
     }
 
-
     private List<TransportationOrder> getAllTestOrders(){
-
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -141,4 +128,68 @@ public class TransportationOrderControllerTest {
 
        }
 
+       @Test
+
+       public void testGetOrder() throws Exception {
+       
+            //call GET "/transportationorders/{truck}"  application/json
+       
+            RequestBuilder request = MockMvcRequestBuilders
+
+                .get("/transportationorders/8962ZKR")
+
+                .accept(MediaType.APPLICATION_JSON);  
+       
+            when(repository.findById("8962ZKR")).thenReturn(Optional.of(
+       
+                     new TransportationOrder("28","8962ZKR",1591682400000L,
+       
+                     40.4562191,-3.8707211,1591692196000L,42.0206372,-4.5330132,
+       
+                     0,0.0,0.0,0)));
+       
+            // now write the rest of the test case...
+            MvcResult result = mockMvc.perform(request)
+
+                .andExpect(status().isOk())
+
+                //.andExpect(jsonPath("$", hasSize(20))) // not 20 --> 1
+
+                .andReturn();
+       
+       }
+
+       @Test
+
+       public void testGetOrderFail() throws Exception {
+       
+            //call GET "/transportationorders/{truck}"  application/json
+       
+            RequestBuilder request = MockMvcRequestBuilders
+
+                //.get("/transportationorders/8962ZKR")
+                .get("/transportationorders/89622ZKR")
+
+                .accept(MediaType.APPLICATION_JSON);  
+       
+            when(repository.findById("8962ZKR")).thenReturn(Optional.of(
+       
+                     new TransportationOrder("28","8962ZKR",1591682400000L,
+       
+                     40.4562191,-3.8707211,1591692196000L,42.0206372,-4.5330132,
+       
+                     0,0.0,0.0,0)));
+       
+            // now write the rest of the test case...
+            MvcResult result = mockMvc.perform(request)
+
+                .andExpect(status().is4xxClientError())
+
+                //.andExpect(jsonPath("$", hasSize(20))) // not 20 --> 1
+
+                .andReturn();
+       
+       }
 }
+
+// program teh inputs and program the expectations
